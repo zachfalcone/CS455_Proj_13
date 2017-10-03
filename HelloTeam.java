@@ -5,12 +5,14 @@ public class HelloTeam {
     }
     public void start() {
         System.out.println("Hello Team. Our team members are:");
-        
+
         TeamMember zach = new TeamMember("Zach", "Programmer");
         zach.printInfo();
-        
+
         // Add your names below
-        
+
+        TeamMember cesar = new TeamMember("Cesar", "QA");
+        cesar.printInfo();
     }
     private class TeamMember {
         private String name, role;
