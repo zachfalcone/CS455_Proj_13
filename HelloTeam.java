@@ -13,6 +13,10 @@ public class HelloTeam {
 
         TeamMember cesar = new TeamMember("Cesar", "QA");
         cesar.printInfo();
+        
+        TeamMember perry = new TeamMember("Perry", "Project Lead");
+        perry.printInfo();
+        
     }
     private class TeamMember {
         private String name, role;
