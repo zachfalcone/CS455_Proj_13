@@ -17,6 +17,9 @@ public class HelloTeam {
         TeamMember perry = new TeamMember("Perry", "Project Lead");
         perry.printInfo();
         
+        TeamMember Sarjil = new TeamMember("Sarjil", "Design Architect");
+        Sarjil.printInfo();
+        
     }
     private class TeamMember {
         private String name, role;
