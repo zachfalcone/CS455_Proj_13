@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "912196512652",
+    "firebase_url": "https://book-n-go-26316.firebaseio.com",
+    "project_id": "book-n-go-26316",
+    "storage_bucket": "book-n-go-26316.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912196512652:android:a39f936e336ced5b",
+        "android_client_info": {
+          "package_name": "cse455.csusb.bookngo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912196512652-97kj3a1g3l4cup5v01l9lruvjhn095be.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACDi-U7eXj13wpp6hV6p3-hYKktzHm7rs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
