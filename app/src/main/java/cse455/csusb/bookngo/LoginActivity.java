@@ -1,11 +1,15 @@
 package cse455.csusb.bookngo;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,32 +34,36 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-    private static final String CLIENT_ID= "912196512652-97kj3a1g3l4cup5v01l9lruvjhn095be.apps.googleusercontent.com";
+    private static final String CLIENT_ID = "912196512652-97kj3a1g3l4cup5v01l9lruvjhn095be.apps.googleusercontent.com";
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
 
     private SignInButton btnSignIn;
-    private LinearLayout llInfo;
-    private TextView tvName;
-    private TextView tvEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().hide();
+
+        View loginView = findViewById(R.id.login_view);
+
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // If device supports light status bar (>=Marshmallow)
+            if (loginView != null) {
+                window.setStatusBarColor(ContextCompat.getColor(this, R.color.lightStatusColor));
+                loginView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // If device supports custom status bar color (>=Lollipop)
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkStatusColor));
+        }
 
         btnSignIn = findViewById(R.id.sign_in_button);
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setOnClickListener(this);
-
-        llInfo = findViewById(R.id.info_layout);
-
-        tvName = findViewById(R.id.name);
-        tvEmail = findViewById(R.id.email);
-
-        Button signOutButton = findViewById(R.id.sign_out_button);
-        signOutButton.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -126,13 +134,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            btnSignIn.setVisibility(View.GONE);
-            llInfo.setVisibility(View.VISIBLE);
-            tvName.setText(user.getDisplayName());
-            tvEmail.setText(user.getEmail());
-        } else {
-            llInfo.setVisibility(View.GONE);
-            btnSignIn.setVisibility(View.VISIBLE);
+            Intent storeIntent = new Intent(this, StoreActivity.class);
+            startActivity(storeIntent);
         }
     }
 
@@ -141,11 +144,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         switch (view.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                break;
-            case R.id.sign_out_button:
-                mAuth.signOut();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                updateUI(null);
                 break;
         }
     }
