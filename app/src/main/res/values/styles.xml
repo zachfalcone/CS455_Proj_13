@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionBarStyle">@style/b2gActionBar</item>
+        <item name="actionBarTheme">@style/b2gActionBarTheme</item>
     </style>
 
     <style name="b2gActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
@@ -17,6 +18,10 @@
 
     <style name="ActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/brightTextColor</item>
+    </style>
+    
+    <style name="b2gActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/brightTextColor</item>
     </style>
 
 </resources>

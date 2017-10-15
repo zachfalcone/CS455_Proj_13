@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Book n\' Go</string>
     <string name="title_activity_store">Store</string>
+    <string name="title_activity_add">Add Book</string>
 </resources>

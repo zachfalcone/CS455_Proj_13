@@ -1,11 +1,15 @@
 package cse455.csusb.bookngo;
 
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,6 +24,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Arrays;
+
 public class StoreActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "GoogleActivity";
@@ -29,6 +35,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
 
     private Button btnName, btnSignOut;
+    private FloatingActionButton btnNew;
 
     private String NAME, EMAIL;
 
@@ -52,25 +59,52 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
         }
 
         mAuth = FirebaseAuth.getInstance();
-        NAME = mAuth.getCurrentUser().getDisplayName();
-        EMAIL = mAuth.getCurrentUser().getEmail();
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(CLIENT_ID)
-                .requestEmail()
-                .build();
+        if (mAuth.getCurrentUser() == null) {
+            // Close if not signed in
+            finish();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                // If device supports app shortcuts
+                ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+                ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "id1")
+                        .setShortLabel("Add Book")
+                        .setLongLabel("Add Book")
+                        .setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_add_shortcut))
+                        .setIntents(
+                                new Intent[] {
+                                        new Intent(Intent.ACTION_MAIN, null, this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK),
+                                        new Intent(Intent.ACTION_MAIN, null, this, AddActivity.class)
+                                })
+                        .build();
 
-        btnName = findViewById(R.id.name_button);
-        btnName.setText(NAME);
-        btnName.setOnClickListener(this);
+                shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
+            }
 
-        btnSignOut = findViewById(R.id.sign_out_button);
-        btnSignOut.setOnClickListener(this);
+            NAME = mAuth.getCurrentUser().getDisplayName();
+            EMAIL = mAuth.getCurrentUser().getEmail();
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(CLIENT_ID)
+                    .requestEmail()
+                    .build();
+
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+
+            btnName = findViewById(R.id.name_button);
+            btnName.setText(NAME);
+            btnName.setOnClickListener(this);
+
+            btnSignOut = findViewById(R.id.sign_out_button);
+            btnSignOut.setOnClickListener(this);
+
+            btnNew = findViewById(R.id.new_button);
+            btnNew.setOnClickListener(this);
+        }
     }
 
     @Override
@@ -94,12 +128,19 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             case R.id.sign_out_button:
                 mAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                    getSystemService(ShortcutManager.class).removeAllDynamicShortcuts();
                 finish();
                 break;
             case R.id.name_button:
                 Intent contactIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + EMAIL));
                 contactIntent.putExtra(Intent.EXTRA_SUBJECT, "[Book n' Go] " + "Sample Book" + " Inquiry");
                 startActivity(Intent.createChooser(contactIntent, "Email " + NAME));
+                break;
+            case R.id.new_button:
+                Intent addIntent = new Intent(this, AddActivity.class);
+                startActivity(addIntent);
+                break;
         }
     }
 }
