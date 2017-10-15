@@ -8,9 +8,9 @@
     <color name="b2gPrimaryDark">#ef5350</color>
 
     <color name="lightStatusColor">#EEEEEE</color>
-    <color name="darkStatusColor">#424242</color>
+    <color name="darkStatusColor">#212121</color>
 
-    <color name="darkTextColor">#424242</color>
+    <color name="darkTextColor">#212121</color>
     <color name="brightTextColor">#ef5350</color>
 
     <color name="white">#FFFFFF</color>

@@ -12,6 +12,7 @@
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -21,6 +22,14 @@
         <activity
             android:name=".AddActivity"
             android:label="@string/title_activity_add"
+            android:parentActivityName=".StoreActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cse455.csusb.bookngo.StoreActivity" />
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"
             android:parentActivityName=".StoreActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
