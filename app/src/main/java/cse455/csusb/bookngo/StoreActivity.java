@@ -3,6 +3,8 @@ package cse455.csusb.bookngo;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +20,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -114,7 +115,11 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(profileIntent);
                 break;
             case R.id.search:
-                mProfile.setIcon(getDrawable(R.drawable.ic_close));
+                mProfile.setIcon(getDrawable(R.drawable.anim_close));
+                Drawable profileIcon = mProfile.getIcon();
+                if (profileIcon instanceof Animatable) {
+                    ((Animatable) profileIcon).start();
+                }
 
                 mProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
@@ -135,7 +140,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 getSupportActionBar().setDisplayShowCustomEnabled(true);
                 getSupportActionBar().setCustomView(R.layout.activity_search);
 
-                TextView search = findViewById(R.id.search_box);
+                EditText search = findViewById(R.id.search_box);
                 InputMethodManager keyboard = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
                 search.requestFocus();
                 keyboard.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
@@ -143,8 +148,11 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 search.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+                        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
                             Search();
+                            return true;
+                        } else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
+                            stopSearch();
                             return true;
                         }
                         return false;
@@ -157,7 +165,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void Search() {
-        TextView search = findViewById(R.id.search_box);
+        EditText search = findViewById(R.id.search_box);
         String book = search.getText().toString();
         if (!book.isEmpty())
             findBook(book);
@@ -168,7 +176,11 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
 
     public void stopSearch() {
         getSupportActionBar().setDisplayShowCustomEnabled(false);
-        mProfile.setIcon(getDrawable(R.drawable.ic_profile));
+        mProfile.setIcon(getDrawable(R.drawable.anim_profile));
+        Drawable profileIcon = mProfile.getIcon();
+        if (profileIcon instanceof Animatable) {
+            ((Animatable) profileIcon).start();
+        }
         mProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
