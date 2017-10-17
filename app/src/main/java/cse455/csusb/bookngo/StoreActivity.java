@@ -11,10 +11,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -34,6 +38,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
 
     private FloatingActionButton btnNew;
+    private MenuItem mProfile, mSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +101,8 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_store, menu);
+        mProfile = menu.findItem(R.id.profile);
+        mSearch = menu.findItem(R.id.search);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -106,8 +113,78 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 Intent profileIntent = new Intent(this, ProfileActivity.class);
                 startActivity(profileIntent);
                 break;
+            case R.id.search:
+                mProfile.setIcon(getDrawable(R.drawable.ic_close));
+
+                mProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        stopSearch();
+                        return true;
+                    }
+                });
+
+                mSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        Search();
+                        return true;
+                    }
+                });
+
+                getSupportActionBar().setDisplayShowCustomEnabled(true);
+                getSupportActionBar().setCustomView(R.layout.activity_search);
+
+                TextView search = findViewById(R.id.search_box);
+                InputMethodManager keyboard = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+                search.requestFocus();
+                keyboard.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+
+                search.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+                            Search();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void Search() {
+        TextView search = findViewById(R.id.search_box);
+        String book = search.getText().toString();
+        if (!book.isEmpty())
+            findBook(book);
+        else
+            Toast.makeText(this, "No book entered.", Toast.LENGTH_SHORT).show();
+        stopSearch();
+    }
+
+    public void stopSearch() {
+        getSupportActionBar().setDisplayShowCustomEnabled(false);
+        mProfile.setIcon(getDrawable(R.drawable.ic_profile));
+        mProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return false;
+            }
+        });
+        mSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return false;
+            }
+        });
+    }
+
+    public void findBook(String text) {
+        Toast.makeText(getApplicationContext(), "Search for " + text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

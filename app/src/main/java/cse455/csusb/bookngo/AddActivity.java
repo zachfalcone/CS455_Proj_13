@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
@@ -67,6 +69,21 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.apply:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

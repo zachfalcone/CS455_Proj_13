@@ -3,15 +3,21 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#EEEEEE</color>
     <color name="colorAccent">#ff4081</color>
-
-    <color name="b2gPrimary">#ff6b63</color>
-    <color name="b2gPrimaryDark">#ef5350</color>
-
     <color name="lightStatusColor">#EEEEEE</color>
     <color name="darkStatusColor">#212121</color>
 
-    <color name="darkTextColor">#212121</color>
-    <color name="brightTextColor">#ef5350</color>
+    <!-- Primary Color -->
+    <!-- Original[#ff6b63], Original2[#ff6b63], CSUSB[#0065bd] -->
+    <color name="b2gPrimary">#ff6b63</color>
+    <!-- Dark Primary Color -->
+    <!-- Original[#ef5350], Original2[#F44336], CSUSB[#00549e] -->
+    <color name="b2gPrimaryDark">#F44336</color>
 
+    <!-- Text Colors -->
+    <color name="darkTextColor">#212121</color>
+    <color name="brightTextColor">@color/b2gPrimaryDark</color>
+
+    <!-- Colors -->
     <color name="white">#FFFFFF</color>
+
 </resources>
