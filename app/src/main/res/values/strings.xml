@@ -4,4 +4,12 @@
     <string name="title_activity_add">Add Book</string>
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_search">Search</string>
+
+    <string-array name="conditions">
+        <item>Like New</item>
+        <item>Good</item>
+        <item>Acceptable</item>
+        <item>Poor</item>
+    </string-array>
+
 </resources>

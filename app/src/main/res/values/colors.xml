@@ -17,6 +17,10 @@
     <color name="darkTextColor">#212121</color>
     <color name="brightTextColor">@color/b2gPrimaryDark</color>
 
+    <!-- EditText -->
+    <color name="editTextBackground">#55FFFFFF</color>
+    <color name="editTextForeground">@color/white</color>
+
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
 
