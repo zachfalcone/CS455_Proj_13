@@ -20,8 +20,10 @@
     <!-- EditText -->
     <color name="editTextBackground">#55FFFFFF</color>
     <color name="editTextForeground">@color/white</color>
+    <color name="text_price">@color/green</color>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
+    <color name="green">#00cc25</color>
 
 </resources>

@@ -7,6 +7,8 @@
     tools:context="cse455.csusb.bookngo.StoreActivity"
     android:id="@+id/store_view">
 
+    <include layout="@layout/item_textbook" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/new_button"
         android:layout_width="wrap_content"
