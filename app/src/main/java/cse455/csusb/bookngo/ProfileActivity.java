@@ -38,14 +38,14 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        View loginView = findViewById(R.id.profile_view);
+        View profileView = findViewById(R.id.profile_view);
 
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // If device supports light status bar (>=Marshmallow)
-            if (loginView != null) {
+            if (profileView != null) {
                 window.setStatusBarColor(ContextCompat.getColor(this, R.color.lightStatusColor));
-                loginView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                profileView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // If device supports custom status bar color (>=Lollipop)

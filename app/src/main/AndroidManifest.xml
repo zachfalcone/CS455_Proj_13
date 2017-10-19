@@ -35,6 +35,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cse455.csusb.bookngo.StoreActivity" />
         </activity>
+        <activity
+            android:name=".ViewActivity"
+            android:label="@string/title_activity_view"
+            android:parentActivityName=".StoreActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cse455.csusb.bookngo.StoreActivity" />
+        </activity>
     </application>
 
 </manifest>

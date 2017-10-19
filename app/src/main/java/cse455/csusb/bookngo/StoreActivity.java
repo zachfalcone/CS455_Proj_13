@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -41,19 +42,21 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     private FloatingActionButton btnNew;
     private MenuItem mProfile, mSearch;
 
+    private CardView previewCard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
-        View loginView = findViewById(R.id.store_view);
+        View storeView = findViewById(R.id.store_view);
 
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // If device supports light status bar (>=Marshmallow)
-            if (loginView != null) {
+            if (storeView != null) {
                 window.setStatusBarColor(ContextCompat.getColor(this, R.color.lightStatusColor));
-                loginView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                storeView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // If device supports custom status bar color (>=Lollipop)
@@ -96,6 +99,9 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
 
             btnNew = findViewById(R.id.new_button);
             btnNew.setOnClickListener(this);
+
+            previewCard = findViewById(R.id.preview_card);
+            previewCard.setOnClickListener(this);
         }
     }
 
@@ -220,6 +226,10 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             case R.id.new_button:
                 Intent addIntent = new Intent(this, AddActivity.class);
                 startActivity(addIntent);
+                break;
+            case R.id.preview_card:
+                Intent viewIntent = new Intent(this, ViewActivity.class);
+                startActivity(viewIntent);
                 break;
         }
     }

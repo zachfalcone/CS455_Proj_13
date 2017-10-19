@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,67 +9,114 @@
     android:id="@+id/add_view"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:background="@color/b2gPrimary" >
+    android:background="@color/b2gPrimary">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="30dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/title"
-            android:layout_height="wrap_content"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:hint="Title"
-            android:padding="15dp"
-            android:layout_marginBottom="30dp"
-            android:background="@color/editTextBackground"
-            android:textColor="@color/editTextForeground"
-            android:inputType="textAutoCorrect"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_horizontal">
 
-        <EditText
-            android:id="@+id/isbn"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:hint="ISBN"
-            android:padding="15dp"
-            android:layout_marginBottom="30dp"
-            android:background="@color/editTextBackground"
-            android:textColor="@color/editTextForeground"
-            android:inputType="number"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="30dp"
+                android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/condition"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:hint="Condition"
-            android:padding="15dp"
-            android:layout_marginBottom="30dp"
-            android:background="@color/editTextBackground"
-            android:textColor="@color/editTextForeground"
-            android:inputType="textAutoCorrect"/>
+                <EditText
+                    android:id="@+id/title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:hint="Title"
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/darkTextColor"
+                    android:inputType="textAutoCorrect" />
 
-        <EditText
-            android:id="@+id/school"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:hint="School"
-            android:padding="15dp"
-            android:layout_marginBottom="30dp"
-            android:background="@color/editTextBackground"
-            android:textColor="@color/editTextForeground"
-            android:inputType="textAutoCorrect"/>
+                <View style="@style/style_line" />
 
-        <EditText
-            android:id="@+id/description"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:hint="Description"
-            android:padding="15dp"
-            android:background="@color/editTextBackground"
-            android:textColor="@color/editTextForeground"
-            android:inputType="textMultiLine"/>
+                <EditText
+                    android:id="@+id/isbn"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:hint="ISBN"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/darkTextColor"
+                    android:inputType="number"/>
+
+                <View style="@style/style_line" />
+
+                <EditText
+                    android:id="@+id/price"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:hint="Price"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/darkTextColor"
+                    android:inputType="number"/>
+
+                <View style="@style/style_line" />
+
+                <EditText
+                    android:id="@+id/school"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:hint="School"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/darkTextColor"
+                    android:inputType="textAutoCorrect"/>
+
+                <View style="@style/style_line" />
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:hint="Description"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/darkTextColor"
+                    android:inputType="textMultiLine"/>
+
+                <View style="@style/style_line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Condition"
+                        android:textColor="?android:textColorHint"
+                        android:textSize="18sp"/>
+
+                    <Spinner
+                        android:id="@+id/condition"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:entries="@array/conditions"
+                        android:background="@android:color/transparent" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 

@@ -39,14 +39,14 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
         setContentView(R.layout.activity_add);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        View loginView = findViewById(R.id.add_view);
+        View addView = findViewById(R.id.add_view);
 
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // If device supports light status bar (>=Marshmallow)
-            if (loginView != null) {
+            if (addView != null) {
                 window.setStatusBarColor(ContextCompat.getColor(this, R.color.lightStatusColor));
-                loginView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                addView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // If device supports custom status bar color (>=Lollipop)

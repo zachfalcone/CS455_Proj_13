@@ -6,10 +6,12 @@
     <string name="title_activity_search">Search</string>
 
     <string-array name="conditions">
-        <item>Like New</item>
+        <item>Excellent</item>
         <item>Good</item>
         <item>Acceptable</item>
         <item>Poor</item>
     </string-array>
+
+    <string name="title_activity_view">Listing</string>
 
 </resources>
