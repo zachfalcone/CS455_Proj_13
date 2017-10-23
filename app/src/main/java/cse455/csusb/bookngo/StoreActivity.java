@@ -12,7 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class StoreActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -41,8 +43,6 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
 
     private FloatingActionButton btnNew;
     private MenuItem mProfile, mSearch;
-
-    private CardView previewCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +100,27 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             btnNew = findViewById(R.id.new_button);
             btnNew.setOnClickListener(this);
 
-            previewCard = findViewById(R.id.preview_card);
-            previewCard.setOnClickListener(this);
+            // Sample data
+            ArrayList<Textbook> textbooks = new ArrayList<>();
+            textbooks.add(new Textbook("Math", "0000000000001", "Excellent", "Description...", 2000, "CSUSB", "Professor", "MATH 101"));
+            textbooks.add(new Textbook("English", "0000000000002", "Good", "Description...", 1500, "CSUSB", "Professor", "ENG 101"));
+            textbooks.add(new Textbook("Biology", "0000000000003", "Acceptable", "Description...", 1000, "CSUSB", "Professor", "BIOL 101"));
+            textbooks.add(new Textbook("C++", "0000000000004", "Good", "Description...", 1500, "CSUSB", "Professor", "CSE 101"));
+            textbooks.add(new Textbook("Physics", "0000000000005", "Good", "Description...", 2000, "CSUSB", "Professor", "PHYS 101"));
+
+            RecyclerView recyclerTextbooks = findViewById(R.id.recycler_textbooks);
+            recyclerTextbooks.setLayoutManager(new LinearLayoutManager(this));
+
+            TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
+            textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
+                    startActivity(viewIntent);
+                }
+            });
+
+            recyclerTextbooks.setAdapter(textbookAdapter);
         }
     }
 
@@ -226,10 +245,6 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             case R.id.new_button:
                 Intent addIntent = new Intent(this, AddActivity.class);
                 startActivity(addIntent);
-                break;
-            case R.id.preview_card:
-                Intent viewIntent = new Intent(this, ViewActivity.class);
-                startActivity(viewIntent);
                 break;
         }
     }
