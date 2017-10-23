@@ -200,6 +200,8 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void stopSearch() {
+        EditText search = findViewById(R.id.search_box);
+        search.clearFocus();
         getSupportActionBar().setDisplayShowCustomEnabled(false);
         mProfile.setIcon(getDrawable(R.drawable.anim_profile));
         Drawable profileIcon = mProfile.getIcon();
