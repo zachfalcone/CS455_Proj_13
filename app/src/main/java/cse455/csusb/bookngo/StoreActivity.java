@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -29,6 +30,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,27 +106,44 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             btnNew = findViewById(R.id.new_button);
             btnNew.setOnClickListener(this);
 
-            // Sample data
-            ArrayList<Textbook> textbooks = new ArrayList<>();
-            textbooks.add(new Textbook("Math", "0000000000001", "Excellent", "Description...", 2000, "CSUSB", "Professor", "MATH 101"));
-            textbooks.add(new Textbook("English", "0000000000002", "Good", "Description...", 1500, "CSUSB", "Professor", "ENG 101"));
-            textbooks.add(new Textbook("Biology", "0000000000003", "Acceptable", "Description...", 1000, "CSUSB", "Professor", "BIOL 101"));
-            textbooks.add(new Textbook("C++", "0000000000004", "Good", "Description...", 1500, "CSUSB", "Professor", "CSE 101"));
-            textbooks.add(new Textbook("Physics", "0000000000005", "Good", "Description...", 2000, "CSUSB", "Professor", "PHYS 101"));
-
-            RecyclerView recyclerTextbooks = findViewById(R.id.recycler_textbooks);
+            final RecyclerView recyclerTextbooks = findViewById(R.id.recycler_textbooks);
             recyclerTextbooks.setLayoutManager(new LinearLayoutManager(this));
+            final ProgressBar storeProgress = findViewById(R.id.progress_store);
 
-            TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
-            textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+            final ArrayList<Textbook> textbooks = new ArrayList<>();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference books = database.getReference("books");
+            books.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onItemClick(View view, int position) {
-                    Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
-                    startActivity(viewIntent);
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    textbooks.clear();
+                    for (DataSnapshot currentBook: dataSnapshot.getChildren()) {
+                        Textbook textbook = currentBook.getValue(Textbook.class);
+                        textbook.setBookID(currentBook.getKey());
+                        textbooks.add(textbook);
+                    }
+                    final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
+                    textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            String bookID = textbookAdapter.getItem(position).getBookID();
+                            Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
+                            viewIntent.putExtra("bookID", bookID);
+                            startActivity(viewIntent);
+                        }
+                    });
+
+                    recyclerTextbooks.setAdapter(textbookAdapter);
+                    storeProgress.setVisibility(View.GONE);
+                    recyclerTextbooks.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
                 }
             });
 
-            recyclerTextbooks.setAdapter(textbookAdapter);
         }
     }
 

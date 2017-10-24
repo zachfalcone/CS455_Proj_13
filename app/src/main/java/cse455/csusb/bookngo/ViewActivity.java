@@ -1,7 +1,9 @@
 package cse455.csusb.bookngo;
 
+import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -13,10 +15,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class ViewActivity extends AppCompatActivity {
 
     private boolean bFavorite = false;
-    private MenuItem mFavorite;
+    private MenuItem mFavorite, mEmail;
+
+    private String bookID;
+
+    private String EMAIL, TITLE, USER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +48,38 @@ public class ViewActivity extends AppCompatActivity {
             // If device supports custom status bar color (>=Lollipop)
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkStatusColor));
         }
+
+        if (getIntent().getStringExtra("bookID") == null) {
+            finish();
+        } else {
+            bookID = getIntent().getStringExtra("bookID");
+            Toast.makeText(getApplicationContext(), bookID, Toast.LENGTH_SHORT).show();
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference book = database.getReference("books").child(bookID);
+
+            book.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Textbook currentBook = dataSnapshot.getValue(Textbook.class);
+                    EMAIL = currentBook.getUserEmail();
+                    TITLE = currentBook.getTitle();
+                    USER = currentBook.getUserName();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_view, menu);
         mFavorite = menu.findItem(R.id.favorite);
+        mEmail = menu.findItem(R.id.email);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -60,6 +98,11 @@ public class ViewActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), bFavorite ? "Starred" : "Unstarred", Toast.LENGTH_SHORT).show();
                 // Add to favorites
 
+                break;
+            case R.id.email:
+                Intent contactIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + EMAIL));
+                contactIntent.putExtra(Intent.EXTRA_SUBJECT, "[Book n' Go] " + TITLE + " Inquiry");
+                startActivity(Intent.createChooser(contactIntent, "Email " + USER));
                 break;
         }
         return super.onOptionsItemSelected(item);

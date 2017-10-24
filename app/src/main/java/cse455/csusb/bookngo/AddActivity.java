@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -22,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
@@ -32,6 +36,11 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
+
+    private TextView textTitle, textISBN, textPrice, textSchool, textDescription;
+    private Spinner spinCondition;
+
+    private String NAME, EMAIL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,9 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
             // Close if not signed in
             finish();
         } else {
+            NAME = mAuth.getCurrentUser().getDisplayName();
+            EMAIL = mAuth.getCurrentUser().getEmail();
+
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(CLIENT_ID)
                     .requestEmail()
@@ -68,6 +80,13 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
                     .enableAutoManage(this, this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
+
+            textTitle = findViewById(R.id.title);
+            textISBN = findViewById(R.id.isbn);
+            textPrice = findViewById(R.id.price);
+            textSchool = findViewById(R.id.school);
+            textDescription = findViewById(R.id.description);
+            spinCondition = findViewById(R.id.condition);
         }
     }
 
@@ -81,6 +100,23 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.apply:
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference books = database.getReference("books");
+                books.push().setValue(
+                        new Textbook(
+                                textTitle.getText().toString(),
+                                textISBN.getText().toString(),
+                                spinCondition.getSelectedItem().toString(),
+                                textDescription.getText().toString(),
+                                Integer.valueOf(textPrice.getText().toString()),
+                                "CSUSB",
+                                "Professor",
+                                "Course",
+                                NAME,
+                                EMAIL
+                        )
+                );
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

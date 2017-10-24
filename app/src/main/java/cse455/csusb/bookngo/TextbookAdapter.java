@@ -68,4 +68,8 @@ public class TextbookAdapter extends RecyclerView.Adapter<TextbookAdapter.MyView
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
+    public Textbook getItem(int position) {
+        return textbooks.get(position);
+    }
 }

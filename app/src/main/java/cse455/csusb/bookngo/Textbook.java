@@ -10,6 +10,10 @@ public class Textbook {
 
     private String school, professor, course;
 
+    private String userName, userEmail, bookID;
+
+    private Textbook(){}
+
     /**
      *
      * @param title Name of textbook.
@@ -20,8 +24,10 @@ public class Textbook {
      * @param school School textbook used at.
      * @param professor Professor textbook used with.
      * @param course Course textbook used with.
+     * @param userName Name of textbook's user.
+     * @param userEmail Email of textbook's user.
      */
-    public Textbook(String title, String isbn, String condition, String description, int cents, String school, String professor, String course) {
+    public Textbook(String title, String isbn, String condition, String description, int cents, String school, String professor, String course, String userName, String userEmail) {
         this.title = title;
         this.isbn = isbn;
         this.condition = condition;
@@ -31,6 +37,9 @@ public class Textbook {
         this.school = school;
         this.professor = professor;
         this.course = course;
+
+        this.userName = userName;
+        this.userEmail = userEmail;
     }
 
     public String getTitle() {
@@ -68,5 +77,21 @@ public class Textbook {
 
     public String getCourse() {
         return course;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public String getBookID() {
+        return bookID;
+    }
+
+    public void setBookID(String bookID) {
+        this.bookID = bookID;
     }
 }

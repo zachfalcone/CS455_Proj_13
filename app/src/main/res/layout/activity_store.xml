@@ -7,12 +7,19 @@
     tools:context="cse455.csusb.bookngo.StoreActivity"
     android:id="@+id/store_view">
 
+    <ProgressBar
+        android:id="@+id/progress_store"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_textbooks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="15dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/new_button"
