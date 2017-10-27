@@ -159,7 +159,7 @@
                         android:textSize="25sp" />
 
                     <TextView
-                        android:id="@+id/description"
+                        android:id="@+id/view_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed semper mi. Aenean eget velit dui. Nam scelerisque hendrerit sem, varius mollis risus dictum in."

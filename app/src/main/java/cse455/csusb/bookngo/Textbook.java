@@ -63,7 +63,7 @@ public class Textbook {
     }
 
     public String getPrice() {
-        double dollars = cents/100;
+        double dollars = cents/100.0;
         return NumberFormat.getCurrencyInstance(Locale.US).format(dollars);
     }
 

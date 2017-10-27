@@ -100,24 +100,36 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.apply:
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference books = database.getReference("books");
-                books.push().setValue(
-                        new Textbook(
-                                textTitle.getText().toString(),
-                                textISBN.getText().toString(),
-                                spinCondition.getSelectedItem().toString(),
-                                textDescription.getText().toString(),
-                                Integer.valueOf(textPrice.getText().toString()),
-                                "CSUSB",
-                                "Professor",
-                                "Course",
-                                NAME,
-                                EMAIL
-                        )
-                );
-                finish();
-                break;
+                if (textTitle.getText().length() < 1)
+                    Toast.makeText(getApplicationContext(), "Enter title.", Toast.LENGTH_SHORT).show();
+                else if (textISBN.getText().length() < 10)
+                    Toast.makeText(getApplicationContext(), "Enter valid ISBN-10.", Toast.LENGTH_SHORT).show();
+                else if (textPrice.getText().length() < 1)
+                    Toast.makeText(getApplicationContext(), "Enter price.", Toast.LENGTH_SHORT).show();
+                else if (textSchool.getText().length() < 1)
+                    Toast.makeText(getApplicationContext(), "Enter school.", Toast.LENGTH_SHORT).show();
+                else if (textDescription.getText().length() < 1)
+                    Toast.makeText(getApplicationContext(), "Enter description.", Toast.LENGTH_SHORT).show();
+                else {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference books = database.getReference("books");
+                    books.push().setValue(
+                            new Textbook(
+                                    textTitle.getText().toString(),
+                                    textISBN.getText().toString(),
+                                    spinCondition.getSelectedItem().toString(),
+                                    textDescription.getText().toString(),
+                                    (int)(Double.parseDouble(textPrice.getText().toString()) * 100),
+                                    "CSUSB",
+                                    "Professor",
+                                    "Course",
+                                    NAME,
+                                    EMAIL
+                            )
+                    );
+                    finish();
+                    break;
+                }
         }
         return super.onOptionsItemSelected(item);
     }

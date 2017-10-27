@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +30,8 @@ public class ViewActivity extends AppCompatActivity {
     private String bookID;
 
     private String EMAIL, TITLE, USER;
+
+    private TextView textTitle, textISBN, textCondition, textPrice, textSchool, textCourse, textDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +56,18 @@ public class ViewActivity extends AppCompatActivity {
             finish();
         } else {
             bookID = getIntent().getStringExtra("bookID");
-            Toast.makeText(getApplicationContext(), bookID, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), bookID, Toast.LENGTH_SHORT).show();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference book = database.getReference("books").child(bookID);
+
+            textTitle = findViewById(R.id.view_title);
+            textISBN = findViewById(R.id.view_isbn);
+            textCondition = findViewById(R.id.view_condition);
+            textPrice = findViewById(R.id.view_price);
+            textSchool = findViewById(R.id.view_school);
+            textCourse = findViewById(R.id.view_course);
+            textDescription = findViewById(R.id.view_description);
 
             book.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -65,6 +76,14 @@ public class ViewActivity extends AppCompatActivity {
                     EMAIL = currentBook.getUserEmail();
                     TITLE = currentBook.getTitle();
                     USER = currentBook.getUserName();
+
+                    textTitle.setText(currentBook.getTitle());
+                    textISBN.setText(currentBook.getIsbn());
+                    textCondition.setText(currentBook.getCondition());
+                    textPrice.setText(currentBook.getPrice());
+                    textSchool.setText(currentBook.getSchool());
+                    textCourse.setText(currentBook.getCourse());
+                    textDescription.setText(currentBook.getDescription());
                 }
 
                 @Override

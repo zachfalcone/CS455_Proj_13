@@ -3,7 +3,7 @@
     <string name="title_activity_store">Store</string>
     <string name="title_activity_add">Add Book</string>
     <string name="title_activity_profile">Profile</string>
-    <string name="title_activity_search">Search</string>
+    <string name="title_activity_search">Search by ISBN-10</string>
 
     <string-array name="conditions">
         <item>Excellent</item>

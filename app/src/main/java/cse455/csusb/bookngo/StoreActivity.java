@@ -34,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -49,6 +50,13 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
 
     private FloatingActionButton btnNew;
     private MenuItem mProfile, mSearch;
+    private ProgressBar storeProgress;
+
+    private DatabaseReference books;
+    private ArrayList<Textbook> textbooks;
+    private RecyclerView recyclerTextbooks;
+
+    private boolean bResults = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,43 +114,14 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
             btnNew = findViewById(R.id.new_button);
             btnNew.setOnClickListener(this);
 
-            final RecyclerView recyclerTextbooks = findViewById(R.id.recycler_textbooks);
+            recyclerTextbooks = findViewById(R.id.recycler_textbooks);
             recyclerTextbooks.setLayoutManager(new LinearLayoutManager(this));
-            final ProgressBar storeProgress = findViewById(R.id.progress_store);
+            storeProgress = findViewById(R.id.progress_store);
 
-            final ArrayList<Textbook> textbooks = new ArrayList<>();
+            textbooks = new ArrayList<>();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference books = database.getReference("books");
-            books.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    textbooks.clear();
-                    for (DataSnapshot currentBook: dataSnapshot.getChildren()) {
-                        Textbook textbook = currentBook.getValue(Textbook.class);
-                        textbook.setBookID(currentBook.getKey());
-                        textbooks.add(textbook);
-                    }
-                    final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
-                    textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            String bookID = textbookAdapter.getItem(position).getBookID();
-                            Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
-                            viewIntent.putExtra("bookID", bookID);
-                            startActivity(viewIntent);
-                        }
-                    });
-
-                    recyclerTextbooks.setAdapter(textbookAdapter);
-                    storeProgress.setVisibility(View.GONE);
-                    recyclerTextbooks.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            books = database.getReference("books");
+            showAllBooks();
 
         }
     }
@@ -246,7 +225,50 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void findBook(String text) {
-        Toast.makeText(getApplicationContext(), "Search for " + text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Search for " + text, Toast.LENGTH_SHORT).show();
+        Query test = books.orderByChild("isbn").startAt(text).endAt(text + "\uf8ff");
+        test.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                textbooks.clear();
+                for (DataSnapshot currentBook: dataSnapshot.getChildren()) {
+                    Textbook textbook = currentBook.getValue(Textbook.class);
+                    textbook.setBookID(currentBook.getKey());
+                    textbooks.add(textbook);
+                }
+                final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
+                textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String bookID = textbookAdapter.getItem(position).getBookID();
+                        Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
+                        viewIntent.putExtra("bookID", bookID);
+                        startActivity(viewIntent);
+                    }
+                });
+
+                recyclerTextbooks.setAdapter(textbookAdapter);
+                storeProgress.setVisibility(View.GONE);
+                recyclerTextbooks.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        bResults = true;
+        getSupportActionBar().setTitle(text);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        showAllBooks();
+        bResults = false;
+        getSupportActionBar().setTitle(getString(R.string.title_activity_store));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        return true;
     }
 
     @Override
@@ -257,11 +279,18 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent exitIntent = new Intent(Intent.ACTION_MAIN);
-        exitIntent.addCategory(Intent.CATEGORY_HOME);
-        exitIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(exitIntent);
+        if (bResults) {
+            showAllBooks();
+            getSupportActionBar().setTitle(getString(R.string.title_activity_store));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            bResults = false;
+        } else {
+            super.onBackPressed();
+            Intent exitIntent = new Intent(Intent.ACTION_MAIN);
+            exitIntent.addCategory(Intent.CATEGORY_HOME);
+            exitIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(exitIntent);
+        }
     }
 
     @Override
@@ -273,4 +302,38 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
+
+    private void showAllBooks() {
+        books.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                textbooks.clear();
+                for (DataSnapshot currentBook: dataSnapshot.getChildren()) {
+                    Textbook textbook = currentBook.getValue(Textbook.class);
+                    textbook.setBookID(currentBook.getKey());
+                    textbooks.add(textbook);
+                }
+                final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
+                textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String bookID = textbookAdapter.getItem(position).getBookID();
+                        Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
+                        viewIntent.putExtra("bookID", bookID);
+                        startActivity(viewIntent);
+                    }
+                });
+
+                recyclerTextbooks.setAdapter(textbookAdapter);
+                storeProgress.setVisibility(View.GONE);
+                recyclerTextbooks.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 }
