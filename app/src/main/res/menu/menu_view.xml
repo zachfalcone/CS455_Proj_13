@@ -10,4 +10,10 @@
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_email" />
+    <item
+        android:id="@+id/delete"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/ic_delete"
+        android:visible="false"/>
 </menu>

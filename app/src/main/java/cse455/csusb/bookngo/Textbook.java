@@ -9,8 +9,9 @@ public class Textbook {
     private int cents;
 
     private String school, professor, course;
-
     private String userName, userEmail, bookID;
+
+    private boolean hasImage = false;
 
     private Textbook(){}
 
@@ -93,5 +94,13 @@ public class Textbook {
 
     public void setBookID(String bookID) {
         this.bookID = bookID;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

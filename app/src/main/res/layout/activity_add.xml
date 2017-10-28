@@ -44,13 +44,13 @@
                     android:id="@+id/isbn"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:hint="ISBN-10"
+                    android:hint="ISBN-13"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp"
                     android:background="@android:color/transparent"
                     android:textColor="@color/darkTextColor"
                     android:inputType="number"
-                    android:maxLength="10"/>
+                    android:maxLength="13"/>
 
                 <View style="@style/style_line" />
 
@@ -58,7 +58,7 @@
                     android:id="@+id/price"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:hint="Price ($)"
+                    android:hint="$ Price"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp"
                     android:background="@android:color/transparent"
@@ -97,7 +97,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -114,6 +115,16 @@
                         android:background="@android:color/transparent" />
 
                 </LinearLayout>
+
+                <View style="@style/style_line" />
+
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/ic_book"
+                    android:foreground="?android:attr/selectableItemBackground"/>
 
             </LinearLayout>
 

@@ -230,26 +230,28 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
         test.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                textbooks.clear();
-                for (DataSnapshot currentBook: dataSnapshot.getChildren()) {
-                    Textbook textbook = currentBook.getValue(Textbook.class);
-                    textbook.setBookID(currentBook.getKey());
-                    textbooks.add(textbook);
-                }
-                final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
-                textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        String bookID = textbookAdapter.getItem(position).getBookID();
-                        Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
-                        viewIntent.putExtra("bookID", bookID);
-                        startActivity(viewIntent);
+                if (dataSnapshot.exists()) {
+                    textbooks.clear();
+                    for (DataSnapshot currentBook : dataSnapshot.getChildren()) {
+                        Textbook textbook = currentBook.getValue(Textbook.class);
+                        textbook.setBookID(currentBook.getKey());
+                        textbooks.add(textbook);
                     }
-                });
+                    final TextbookAdapter textbookAdapter = new TextbookAdapter(textbooks);
+                    textbookAdapter.setOnItemClickListener(new TextbookAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            String bookID = textbookAdapter.getItem(position).getBookID();
+                            Intent viewIntent = new Intent(getApplicationContext(), ViewActivity.class);
+                            viewIntent.putExtra("bookID", bookID);
+                            startActivity(viewIntent);
+                        }
+                    });
 
-                recyclerTextbooks.setAdapter(textbookAdapter);
-                storeProgress.setVisibility(View.GONE);
-                recyclerTextbooks.setVisibility(View.VISIBLE);
+                    recyclerTextbooks.setAdapter(textbookAdapter);
+                    storeProgress.setVisibility(View.GONE);
+                    recyclerTextbooks.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

@@ -1,37 +1,57 @@
 package cse455.csusb.bookngo;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ViewActivity extends AppCompatActivity {
 
+    private static final String TAG = "GoogleActivity";
+    private static final String CLIENT_ID = "912196512652-97kj3a1g3l4cup5v01l9lruvjhn095be.apps.googleusercontent.com";
+
+    private GoogleApiClient mGoogleApiClient;
+    private FirebaseAuth mAuth;
+
     private boolean bFavorite = false;
-    private MenuItem mFavorite, mEmail;
+    private MenuItem mFavorite, mEmail, mDelete;
 
     private String bookID;
 
     private String EMAIL, TITLE, USER;
 
     private TextView textTitle, textISBN, textCondition, textPrice, textSchool, textCourse, textDescription;
+    private ImageView imageBook;
+
+    private boolean ownsBook = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +72,9 @@ public class ViewActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkStatusColor));
         }
 
-        if (getIntent().getStringExtra("bookID") == null) {
+        mAuth = FirebaseAuth.getInstance();
+
+        if (getIntent().getStringExtra("bookID") == null || mAuth.getCurrentUser() == null) {
             finish();
         } else {
             bookID = getIntent().getStringExtra("bookID");
@@ -68,22 +90,48 @@ public class ViewActivity extends AppCompatActivity {
             textSchool = findViewById(R.id.view_school);
             textCourse = findViewById(R.id.view_course);
             textDescription = findViewById(R.id.view_description);
+            imageBook = findViewById(R.id.view_image);
 
             book.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Textbook currentBook = dataSnapshot.getValue(Textbook.class);
-                    EMAIL = currentBook.getUserEmail();
-                    TITLE = currentBook.getTitle();
-                    USER = currentBook.getUserName();
+                    if (dataSnapshot.exists()) {
+                        Textbook currentBook = dataSnapshot.getValue(Textbook.class);
+                        EMAIL = currentBook.getUserEmail();
+                        TITLE = currentBook.getTitle();
+                        USER = currentBook.getUserName();
 
-                    textTitle.setText(currentBook.getTitle());
-                    textISBN.setText(currentBook.getIsbn());
-                    textCondition.setText(currentBook.getCondition());
-                    textPrice.setText(currentBook.getPrice());
-                    textSchool.setText(currentBook.getSchool());
-                    textCourse.setText(currentBook.getCourse());
-                    textDescription.setText(currentBook.getDescription());
+                        textTitle.setText(currentBook.getTitle());
+                        textISBN.setText(currentBook.getIsbn());
+                        textCondition.setText(currentBook.getCondition());
+                        textPrice.setText(currentBook.getPrice());
+                        textSchool.setText(currentBook.getSchool());
+                        textCourse.setText(currentBook.getCourse());
+                        textDescription.setText("Sold by " + currentBook.getUserName() + ". " + currentBook.getDescription());
+
+                        if (currentBook.isHasImage()) {
+                            FirebaseStorage storage = FirebaseStorage.getInstance();
+                            StorageReference storageReference = storage.getReference().child("textbooks/" + dataSnapshot.getKey() + ".jpg");
+                            storageReference.getBytes(10 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    imageBook.setImageBitmap(image);
+                                    findViewById(R.id.view_imageCard).setVisibility(View.VISIBLE);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                }
+                            });
+                        }
+
+                        if (EMAIL.equals(mAuth.getCurrentUser().getEmail())) {
+                            ownsBook = true;
+                            invalidateOptionsMenu();
+                        }
+                    }
                 }
 
                 @Override
@@ -99,6 +147,11 @@ public class ViewActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_view, menu);
         mFavorite = menu.findItem(R.id.favorite);
         mEmail = menu.findItem(R.id.email);
+        mDelete = menu.findItem(R.id.delete);
+        if (ownsBook) {
+            mEmail.setVisible(false);
+            mDelete.setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -122,6 +175,17 @@ public class ViewActivity extends AppCompatActivity {
                 Intent contactIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + EMAIL));
                 contactIntent.putExtra(Intent.EXTRA_SUBJECT, "[Book n' Go] " + TITLE + " Inquiry");
                 startActivity(Intent.createChooser(contactIntent, "Email " + USER));
+                break;
+            case R.id.delete:
+                DatabaseReference books = FirebaseDatabase.getInstance().getReference("books").child(bookID);
+
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageReference = storage.getReference().child("textbooks/" + bookID + ".jpg");
+
+                storageReference.delete();
+                books.removeValue();
+
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
