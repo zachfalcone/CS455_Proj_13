@@ -10,9 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -20,6 +23,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -29,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
 
-    private Button btnName, btnSignOut;
+    private TextView textName, textEmail, textCount;
 
     private String NAME, EMAIL;
 
@@ -71,13 +80,52 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
 
-            btnName = findViewById(R.id.name_button);
-            btnName.setText(NAME);
-            btnName.setOnClickListener(this);
+            textName = findViewById(R.id.text_name);
+            textName.setText(NAME);
 
-            btnSignOut = findViewById(R.id.sign_out_button);
-            btnSignOut.setOnClickListener(this);
+            textEmail = findViewById(R.id.text_email);
+            textEmail.setText(EMAIL);
+
+            textCount = findViewById(R.id.text_count);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference books = database.getReference("books");
+            Query myBooks = books.orderByChild("userEmail").equalTo(EMAIL);
+            myBooks.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        textCount.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_sign_out:
+                mAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
+                    getSystemService(ShortcutManager.class).removeAllDynamicShortcuts();
+                Intent loginIntent = new Intent(this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(loginIntent);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -89,20 +137,11 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.sign_out_button:
-                mAuth.signOut();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
-                    getSystemService(ShortcutManager.class).removeAllDynamicShortcuts();
-                Intent loginIntent = new Intent(this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(loginIntent);
-                finish();
-                break;
-            case R.id.name_button:
+            /*case R.id.name_button:
                 Intent contactIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + EMAIL));
                 contactIntent.putExtra(Intent.EXTRA_SUBJECT, "[Book n' Go] " + "Sample Book" + " Inquiry");
                 startActivity(Intent.createChooser(contactIntent, "Email " + NAME));
-                break;
+                break;*/
         }
     }
 }

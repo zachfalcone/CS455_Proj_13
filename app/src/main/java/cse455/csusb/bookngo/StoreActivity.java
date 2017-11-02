@@ -251,6 +251,10 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                     recyclerTextbooks.setAdapter(textbookAdapter);
                     storeProgress.setVisibility(View.GONE);
                     recyclerTextbooks.setVisibility(View.VISIBLE);
+                } else {
+                    textbooks.clear();
+                    storeProgress.setVisibility(View.GONE);
+                    recyclerTextbooks.setVisibility(View.VISIBLE);
                 }
             }
 

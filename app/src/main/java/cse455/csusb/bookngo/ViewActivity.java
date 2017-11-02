@@ -40,6 +40,8 @@ public class ViewActivity extends AppCompatActivity {
 
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference book;
 
     private boolean bFavorite = false;
     private MenuItem mFavorite, mEmail, mDelete;
@@ -80,8 +82,8 @@ public class ViewActivity extends AppCompatActivity {
             bookID = getIntent().getStringExtra("bookID");
             //Toast.makeText(getApplicationContext(), bookID, Toast.LENGTH_SHORT).show();
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference book = database.getReference("books").child(bookID);
+            database = FirebaseDatabase.getInstance();
+            book = database.getReference("books").child(bookID);
 
             textTitle = findViewById(R.id.view_title);
             textISBN = findViewById(R.id.view_isbn);
@@ -129,7 +131,10 @@ public class ViewActivity extends AppCompatActivity {
 
                         if (EMAIL.equals(mAuth.getCurrentUser().getEmail())) {
                             ownsBook = true;
-                            invalidateOptionsMenu();
+                        }
+
+                        if (dataSnapshot.child("favorites").hasChild(mAuth.getCurrentUser().getEmail().replace(".", ""))) {
+                            bFavorite = true;
                         }
                     }
                 }
@@ -139,6 +144,7 @@ public class ViewActivity extends AppCompatActivity {
 
                 }
             });
+
         }
     }
 
@@ -151,6 +157,9 @@ public class ViewActivity extends AppCompatActivity {
         if (ownsBook) {
             mEmail.setVisible(false);
             mDelete.setVisible(true);
+        }
+        if (bFavorite) {
+            mFavorite.setIcon(getDrawable(R.drawable.ic_star));
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -167,8 +176,10 @@ public class ViewActivity extends AppCompatActivity {
                     ((Animatable) favoriteIcon).start();
                 }
 
-                //Toast.makeText(getApplicationContext(), bFavorite ? "Starred" : "Unstarred", Toast.LENGTH_SHORT).show();
-                // Add to favorites
+                if (bFavorite)
+                    book.child("favorites").child(mAuth.getCurrentUser().getEmail().replace(".", "")).setValue(mAuth.getCurrentUser().getEmail());
+                else
+                    book.child("favorites").child(EMAIL.replace(".", "")).removeValue();
 
                 break;
             case R.id.email:
@@ -177,13 +188,11 @@ public class ViewActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(contactIntent, "Email " + USER));
                 break;
             case R.id.delete:
-                DatabaseReference books = FirebaseDatabase.getInstance().getReference("books").child(bookID);
-
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageReference = storage.getReference().child("textbooks/" + bookID + ".jpg");
 
                 storageReference.delete();
-                books.removeValue();
+                book.removeValue();
 
                 finish();
                 break;

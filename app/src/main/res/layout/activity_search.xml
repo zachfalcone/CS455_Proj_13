@@ -7,5 +7,5 @@
     android:id="@+id/search_box"
     android:maxLines="1"
     android:inputType="number"
-    android:maxLength="10"
+    android:maxLength="13"
     android:imeOptions="actionSearch"/>

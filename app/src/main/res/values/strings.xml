@@ -13,5 +13,6 @@
     </string-array>
 
     <string name="title_activity_view">Listing</string>
+    <string name="sign_out">Sign out</string>
 
 </resources>

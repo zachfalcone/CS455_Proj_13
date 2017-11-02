@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -51,13 +52,15 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
 
-    private TextView textTitle, textISBN, textPrice, textSchool, textDescription;
+    private EditText textTitle, textISBN, textPrice, textSchool, textDescription;
     private Spinner spinCondition;
-    private ImageView imagePhoto;
+    private ImageView imagePhoto, clearPhoto;
+    private TextView textCondition;
 
     private String NAME, EMAIL;
 
     private Bitmap image;
+    private int imagePadding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,10 +104,13 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
             textTitle = findViewById(R.id.title);
             textISBN = findViewById(R.id.isbn);
             textPrice = findViewById(R.id.price);
-            textSchool = findViewById(R.id.school);
+            //textSchool = findViewById(R.id.school);
             textDescription = findViewById(R.id.description);
             spinCondition = findViewById(R.id.condition);
+            textCondition = findViewById(R.id.text_condition);
             imagePhoto = findViewById(R.id.photo);
+            imagePadding = imagePhoto.getPaddingStart();
+            clearPhoto = findViewById(R.id.clear_photo);
 
             imagePhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,15 +123,25 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
                 }
             });
 
-            imagePhoto.setOnLongClickListener(new View.OnLongClickListener() {
+            clearPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
+                public void onClick(View view) {
                     if (image != null) {
                         image.recycle();
                         image = null;
                     }
-                    imagePhoto.setImageDrawable(getDrawable(R.drawable.ic_book));
-                    return true;
+                    imagePhoto.setImageDrawable(getDrawable(R.drawable.ic_add_photo));
+                    imagePhoto.setPadding(imagePadding,imagePadding,imagePadding,imagePadding);
+                    imagePhoto.setAdjustViewBounds(false);
+                    imagePhoto.setEnabled(true);
+                    clearPhoto.setVisibility(View.GONE);
+                }
+            });
+
+            textCondition.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    spinCondition.performClick();
                 }
             });
         }
@@ -140,6 +156,10 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
                 InputStream imageStream = getContentResolver().openInputStream(chosenImage);
                 image = BitmapFactory.decodeStream(imageStream);
                 imagePhoto.setImageBitmap(image);
+                imagePhoto.setPadding(0,0,0,0);
+                imagePhoto.setAdjustViewBounds(true);
+                imagePhoto.setEnabled(false);
+                clearPhoto.setVisibility(View.VISIBLE);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -164,8 +184,8 @@ public class AddActivity extends AppCompatActivity implements GoogleApiClient.On
                     Toast.makeText(getApplicationContext(), "Enter price.", Toast.LENGTH_SHORT).show();
                 else if ((Double.parseDouble(textPrice.getText().toString())) >= 1000.0)
                     Toast.makeText(getApplicationContext(), "Please lower price to less than $1000.00.", Toast.LENGTH_SHORT).show();
-                else if (textSchool.getText().length() < 1)
-                    Toast.makeText(getApplicationContext(), "Enter school.", Toast.LENGTH_SHORT).show();
+                /*else if (textSchool.getText().length() < 1)
+                    Toast.makeText(getApplicationContext(), "Enter school.", Toast.LENGTH_SHORT).show();*/
                 else if (textDescription.getText().length() < 1)
                     Toast.makeText(getApplicationContext(), "Enter description.", Toast.LENGTH_SHORT).show();
                 else {
