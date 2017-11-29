@@ -63,6 +63,7 @@ public class TextbookAdapter extends RecyclerView.Adapter<TextbookAdapter.MyView
         holder.previewPrice.setText(String.valueOf(textbooks.get(position).getPrice()));
         holder.previewCondition.setText(textbooks.get(position).getCondition());
         if (textbooks.get(position).isHasImage()) holder.previewHasImage.setVisibility(View.VISIBLE);
+        else holder.previewHasImage.setVisibility(View.GONE);
     }
 
     @Override
